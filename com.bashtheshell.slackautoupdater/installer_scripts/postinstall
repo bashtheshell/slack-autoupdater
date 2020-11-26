@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+app_name='Slack AutoUpdater'
+app_bundle_id='com.bashtheshell.slackautoupdater'
+
+# copy files to directories
+sudo cp -f /Applications/"${app_name}".app/Contents/Resources/"${app_bundle_id}"/"${app_bundle_id}".plist /Library/LaunchDaemons/
+
+# persistently start the service and run it
+sudo launchctl unload -wF /Library/LaunchDaemons/"${app_bundle_id}".plist
+sudo launchctl load -wF /Library/LaunchDaemons/"${app_bundle_id}".plist
+
+# give service at least a split second to set up
+sleep 0.5
+
+# print service's current proccess ID
+echo ""
+echo "PID:"
+sudo launchctl list | grep -E "(PID|${app_bundle_id})"
+pid_value=$(sudo launchctl list | grep ${app_bundle_id} | awk '{ print $1 }')
+echo ""

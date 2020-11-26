@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>EnvironmentVariables</key>
+		<dict>
+			<key>PATH</key>
+			<string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:</string>
+		</dict>
+		<key>Label</key>
+		<!-- PLEASE MAKE SURE THE FILE PATH IS CORRECT HERE -->
+		<string>com.bashtheshell.slackautoupdater</string>
+		<key>ProgramArguments</key>
+			<array>
+				<string>/bin/bash</string>
+				<string>-c</string>
+				<!-- PLEASE MAKE SURE THE VARIABLE IS CORRECTLY SET HERE -->
+				<string>
+					app_name='Slack AutoUpdater.app'
+					app_bundle_id='com.bashtheshell.slackautoupdater'
+					app_Resources_dir="/Applications/${app_name}/Contents/Resources"
+					if [[ -d /Applications/${app_name} ]]
+					then
+						# Periodically...
+
+						# Truncate temporary files (30 days worth of lines)
+						tail -n 10000 /tmp/"$app_bundle_id".stdout > /tmp/"$app_bundle_id".stdout.tmp
+						cat /tmp/"$app_bundle_id".stdout.tmp > /tmp/"$app_bundle_id".stdout
+						rm /tmp/"$app_bundle_id".stdout.tmp
+
+						tail -n 10000 /tmp/"$app_bundle_id".stderr > /tmp/"$app_bundle_id".stderr.tmp
+						cat /tmp/"$app_bundle_id".stderr.tmp > /tmp/"$app_bundle_id".stderr
+						rm /tmp/"$app_bundle_id".stderr.tmp
+
+						# Run the script
+						"$app_Resources_dir"/"$app_bundle_id"/slack_update.sh
+					else
+						# Remove this LaunchDaemon if app is no longer in `/Applications` directory
+						rm /Library/LaunchDaemons/${app_bundle_id}.plist
+						launchctl unload -wF /Library/LaunchDaemons/${app_bundle_id}.plist
+						launchctl remove ${app_bundle_id}
+					fi
+				</string>
+			</array>
+		<key>RunAtLoad</key>
+		<true/>
+		<key>StartInterval</key>
+		<integer>600</integer>
+		<key>StandardOutPath</key>
+		<!-- PLEASE MAKE SURE THE FILE PATH IS CORRECT HERE -->
+		<string>/tmp/com.bashtheshell.slackautoupdater.stdout</string>
+		<key>StandardErrorPath</key>
+		<!-- PLEASE MAKE SURE THE FILE PATH IS CORRECT HERE -->
+		<string>/tmp/com.bashtheshell.slackautoupdater.stderr</string>
+		<key>UserName</key>
+		<string>root</string>
+		<key>GroupName</key>
+		<string>wheel</string>
+	</dict>
+</plist>
+
