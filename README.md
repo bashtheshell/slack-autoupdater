@@ -43,10 +43,10 @@ The `pkgbuild` command would be used to create the Installer (.pkg) file. This i
 While in the `slack-autoupdater` directory, run:
 
 ```shell
-pkgbuild \ 
-    --identifier com.bashtheshell.slackautoupdater \
-    --version 1.0 \
-    --root ./build/Slack\ AutoUpdater.app  \
+/usr/bin/pkgbuild \
+    --identifier 'com.bashtheshell.slackautoupdater' \
+    --version '1.0' \
+    --root ./build/Slack\ AutoUpdater.app \
     --scripts ./build/Slack\ AutoUpdater.app/Contents/Resources/com.bashtheshell.slackautoupdater/installer_scripts/ \
     --install-location /Applications/Slack\ AutoUpdater.app \
     ./build/com.bashtheshell.slackautoupdater.pkg
